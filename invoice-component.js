@@ -255,7 +255,7 @@ const ZinniaInvoiceGenerator = () => {
                                     </tr>
                                     <tr style="border-top: 1px solid #e5e7eb;">
                                         <td align="left" style="padding-top: 16px; font-weight: 600; color: #1f2937; font-size: 14px;">Total</td>
-                                        <td align="right" style="padding-top: 16px; font-weight: 600; color: #1f2937; font-size: 14px;">$${formatCurrency(total)} USD</td>
+                                        <td align="right" style="padding-top: 16px; font-weight: 600; color: #242d4f; font-size: 14px;">$${formatCurrency(total)} USD</td>
                                     </tr>
                                 </tbody>
                             </table>
