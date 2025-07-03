@@ -2,7 +2,7 @@
   "name": "zinnia-invoice-generator",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://TU_USUARIO_GITHUB.github.io/zinnia-invoice-generator",
+  "homepage": "homepage": "https://byferraz.github.io/zinnia-invoice-generator",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
