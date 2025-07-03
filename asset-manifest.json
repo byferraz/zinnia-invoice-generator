@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/zinnia-invoice-generator/static/css/main.186506e8.css",
+    "main.js": "/zinnia-invoice-generator/static/js/main.ab925b65.js",
+    "index.html": "/zinnia-invoice-generator/index.html",
+    "main.186506e8.css.map": "/zinnia-invoice-generator/static/css/main.186506e8.css.map",
+    "main.ab925b65.js.map": "/zinnia-invoice-generator/static/js/main.ab925b65.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.186506e8.css",
+    "static/js/main.ab925b65.js"
+  ]
+}
