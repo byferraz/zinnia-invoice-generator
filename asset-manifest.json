@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/zinnia-invoice-generator/static/css/main.186506e8.css",
-    "main.js": "/zinnia-invoice-generator/static/js/main.ab925b65.js",
+    "main.js": "/zinnia-invoice-generator/static/js/main.bf6d4e1b.js",
     "index.html": "/zinnia-invoice-generator/index.html",
     "main.186506e8.css.map": "/zinnia-invoice-generator/static/css/main.186506e8.css.map",
-    "main.ab925b65.js.map": "/zinnia-invoice-generator/static/js/main.ab925b65.js.map"
+    "main.bf6d4e1b.js.map": "/zinnia-invoice-generator/static/js/main.bf6d4e1b.js.map"
   },
   "entrypoints": [
     "static/css/main.186506e8.css",
-    "static/js/main.ab925b65.js"
+    "static/js/main.bf6d4e1b.js"
   ]
 }
