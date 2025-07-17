@@ -61,6 +61,11 @@ const ZinniaInvoiceGenerator = () => {
   const [selectedClients, setSelectedClients] = useState([]);
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState('');
+  // NUEVOS ESTADOS PARA TERMS & CONDITIONS
+  const [paymentDays, setPaymentDays] = useState('15');
+  const [lateFeeDays, setLateFeeDays] = useState('30');
+  const [lateFeeRate, setLateFeeRate] = useState('1.5');
+  
   const [editingClient, setEditingClient] = useState(null);
   const [showClientForm, setShowClientForm] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState({ isOpen: false, onConfirm: () => {} });
@@ -312,8 +317,8 @@ const ZinniaInvoiceGenerator = () => {
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr><td align="left" style="font-size: 14px; color: #ffffff; line-height: 1.5;">
                             <p style="font-weight: 400; margin: 0 0 8px 0;">Terms & Conditions</p>
-                            <p style="margin: 0;">Please pay within net 15 days of receiving this invoice.</p>
-                            <p style="margin: 0;">Invoices not paid within 30 days are subject to a 1.5% monthly finance charge</p>
+                            <p style="margin: 0;">Please pay within net ${paymentDays} days of receiving this invoice.</p>
+                            <p style="margin: 0;">Invoices not paid within ${lateFeeDays} days are subject to a ${lateFeeRate}% monthly finance charge</p>
                         </td></tr>
                     </table>
                 </div>
@@ -504,6 +509,47 @@ const ZinniaInvoiceGenerator = () => {
                         <label className="block text-sm font-medium mb-2" style={{color: '#242d4f'}}>Due date</label>
                         <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="w-full px-3 py-2 border rounded-md" style={{borderColor: '#ebecea'}}/>
                       </div>
+                   </div>
+
+                   {/* NUEVA SECCIÓN: TERMS & CONDITIONS */}
+                   <div className="mt-4 p-4 bg-gray-50 rounded-lg" style={{borderColor: '#ebecea'}}>
+                     <h4 className="text-md font-medium mb-3" style={{color: '#242d4f'}}>Terms & Conditions</h4>
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                       <div>
+                         <label className="block text-xs font-medium text-gray-700 mb-1">Payment Days</label>
+                         <input 
+                           type="number" 
+                           value={paymentDays} 
+                           onChange={(e) => setPaymentDays(e.target.value)} 
+                           className="w-full px-3 py-2 border rounded-md text-sm" 
+                           style={{borderColor: '#ebecea'}}
+                           placeholder="15"
+                         />
+                       </div>
+                       <div>
+                         <label className="block text-xs font-medium text-gray-700 mb-1">Late Fee Days</label>
+                         <input 
+                           type="number" 
+                           value={lateFeeDays} 
+                           onChange={(e) => setLateFeeDays(e.target.value)} 
+                           className="w-full px-3 py-2 border rounded-md text-sm" 
+                           style={{borderColor: '#ebecea'}}
+                           placeholder="30"
+                         />
+                       </div>
+                       <div>
+                         <label className="block text-xs font-medium text-gray-700 mb-1">Late Fee Rate (%)</label>
+                         <input 
+                           type="number" 
+                           step="0.1"
+                           value={lateFeeRate} 
+                           onChange={(e) => setLateFeeRate(e.target.value)} 
+                           className="w-full px-3 py-2 border rounded-md text-sm" 
+                           style={{borderColor: '#ebecea'}}
+                           placeholder="1.5"
+                         />
+                       </div>
+                     </div>
                    </div>
 
                    <div>
