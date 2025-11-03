@@ -54,7 +54,8 @@ const ZinniaInvoiceGenerator = () => {
     { id: 4, name: "THEHORA GLOBAL FAMILY OFFICE INC.", taxId: "", address: "Suite 5, Horsford´s Business Center, Long Point Road, Nevis", address2: "", standardAmount: "325.00", standardSubject: "Strategic Executive Positioning of Jaume Horrach Pons", taxRate: "0", hasTax: false },
     { id: 5, name: "PAMPA CAPITAL ASSET MANAGEMENT", taxId: "30717987213", address: "Ortiz de Ocampo 3302, Modulo 3, Oficina 4, CABA, Argentina", address2: "", standardAmount: "1500.00", standardSubject: "Zinnia Essential Plan :: Pampa Capital", taxRate: "0", hasTax: false },
     { id: 6, name: "BAU ADVISORS LLC", taxId: "", address: "1200 Brickell Ave - Suite 1950, Miami, FL 33131, US", address2: "", standardAmount: "900.00", standardSubject: "Priority 1 scope", taxRate: "0", hasTax: false },
-    { id: 7, name: "VMEO ADVISORY, S.C.", taxId: "VAD200226RS9", address: "HEGEL 221 PISO 1 POLANCO, MEXICO", address2: "", standardAmount: "1500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false }
+    { id: 7, name: "VMEO ADVISORY, S.C.", taxId: "VAD200226RS9", address: "HEGEL 221 PISO 1 POLANCO, MEXICO", address2: "", standardAmount: "1500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
+    { id: 8, name: "Norfolk Capital Advisors Panamá S.A.", taxId: "2352531'1'798087 DV 4", address: "Edificio Midtown, San Francisco, Ciudad de Panamá, Panamá", address2: "Piso 17", standardAmount: "3000.00", standardSubject: "Initial Strategic Deliverables (50%)", taxRate: "0", hasTax: false }
   ];
 
   const [clients, setClients] = useState(preloadedClients);
