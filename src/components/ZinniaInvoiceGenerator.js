@@ -56,7 +56,8 @@ const ZinniaInvoiceGenerator = () => {
     { id: 6, name: "BAU ADVISORS LLC", taxId: "", address: "1200 Brickell Ave - Suite 1950, Miami, FL 33131, US", address2: "", standardAmount: "900.00", standardSubject: "Priority 1 scope", taxRate: "0", hasTax: false },
     { id: 7, name: "VMEO ADVISORY, S.C.", taxId: "VAD200226RS9", address: "HEGEL 221 PISO 1 POLANCO, MEXICO", address2: "", standardAmount: "1500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
     { id: 8, name: "NORFOLK CAPITAL ADVISORS PANAMÁ S.A.", taxId: "2352531'1'798087 DV 4", address: "Edificio Midtown, San Francisco, Ciudad de Panamá, Panamá", address2: "Piso 17", standardAmount: "3000.00", standardSubject: "Initial Strategic Deliverables (50%)", taxRate: "0", hasTax: false },
-    { id: 9, name: "BRASIL PLURAL INVESTMENT ADVISORS LLC", taxId: "", address: "2601 S Bayshore Drive Unit 1200, Coconut Grove, FL 33133", address2: "", standardAmount: "500.00", standardSubject: "Service Maintenance, Operational Support and Basic Operations", taxRate: "0", hasTax: false }
+    { id: 9, name: "BRASIL PLURAL INVESTMENT ADVISORS LLC", taxId: "", address: "2601 S Bayshore Drive Unit 1200, Coconut Grove, FL 33133", address2: "", standardAmount: "500.00", standardSubject: "Service Maintenance, Operational Support and Basic Operations", taxRate: "0", hasTax: false },
+    { id: 10, name: "DXD CAPITAL", taxId: "", address: "6801 Jefferson St. NE, 401-B ABQ, NM 87109", address2: "", standardAmount: "1000.00", standardSubject: "Zinnia Media Services", taxRate: "0", hasTax: false }
   ];
 
   const [clients, setClients] = useState(preloadedClients);
