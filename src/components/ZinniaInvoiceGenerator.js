@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Plus, Edit2, Trash2, Save, X, FileText, Users, Loader, AlertTriangle, Printer, Clock } from 'lucide-react';
 import ZinniaLogo from './ZinniaLogo';
+import { supabase } from '../supabase';
 
 // A simple, reusable modal component for confirmations
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, children }) => {
@@ -61,14 +62,8 @@ const ZinniaInvoiceGenerator = () => {
     { id: 10, name: "DXD CAPITAL", taxId: "", address: "6801 Jefferson St. NE, 401-B ABQ, NM 87109", address2: "", standardAmount: "1000.00", standardSubject: "Zinnia Media Services", taxRate: "0", hasTax: false }
   ];
 
-  const [clients, setClients] = useState(() => {
-    try {
-      const saved = localStorage.getItem('zinnia-clients');
-      return saved ? JSON.parse(saved) : preloadedClients;
-    } catch {
-      return preloadedClients;
-    }
-  });
+  const [clients, setClients] = useState([]);
+  const [clientsLoading, setClientsLoading] = useState(true);
   const [selectedClients, setSelectedClients] = useState([]);
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState('');
@@ -86,10 +81,33 @@ const ZinniaInvoiceGenerator = () => {
     standardAmount: '', standardSubject: '', taxRate: '0', hasTax: false
   });
 
-  // Persist clients to localStorage whenever they change
+  // Load clients from Supabase on mount; seed with preloaded if table is empty
   useEffect(() => {
-    try { localStorage.setItem('zinnia-clients', JSON.stringify(clients)); } catch {}
-  }, [clients]);
+    const loadClients = async () => {
+      setClientsLoading(true);
+      const { data, error } = await supabase.from('invoice_clients').select('*').order('id');
+      if (!error && data) {
+        if (data.length === 0) {
+          // Seed with preloaded clients on first use
+          const rows = preloadedClients.map(c => ({
+            id: c.id, name: c.name, tax_id: c.taxId, address: c.address,
+            address2: c.address2, standard_amount: c.standardAmount,
+            standard_subject: c.standardSubject, tax_rate: c.taxRate, has_tax: c.hasTax
+          }));
+          await supabase.from('invoice_clients').insert(rows);
+          setClients(preloadedClients);
+        } else {
+          setClients(data.map(r => ({
+            id: r.id, name: r.name, taxId: r.tax_id || '', address: r.address || '',
+            address2: r.address2 || '', standardAmount: r.standard_amount || '',
+            standardSubject: r.standard_subject || '', taxRate: r.tax_rate || '0', hasTax: r.has_tax || false
+          })));
+        }
+      }
+      setClientsLoading(false);
+    };
+    loadClients();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Effect to auto-calculate due date
   useEffect(() => {
@@ -108,12 +126,22 @@ const ZinniaInvoiceGenerator = () => {
     });
   };
 
-  const handleSaveClient = () => {
+  const toRow = (c) => ({
+    id: c.id, name: c.name, tax_id: c.taxId, address: c.address,
+    address2: c.address2, standard_amount: c.standardAmount,
+    standard_subject: c.standardSubject, tax_rate: c.taxRate, has_tax: c.hasTax,
+    updated_at: new Date().toISOString()
+  });
+
+  const handleSaveClient = async () => {
     if (editingClient) {
-      setClients(clients.map(c => c.id === editingClient.id ? {...clientForm, id: editingClient.id} : c));
+      const updated = {...clientForm, id: editingClient.id};
+      await supabase.from('invoice_clients').upsert(toRow(updated));
+      setClients(clients.map(c => c.id === editingClient.id ? updated : c));
       setEditingClient(null);
     } else {
       const newClient = {...clientForm, id: Date.now()};
+      await supabase.from('invoice_clients').insert(toRow(newClient));
       setClients([...clients, newClient]);
     }
     resetClientForm();
@@ -131,7 +159,8 @@ const ZinniaInvoiceGenerator = () => {
         isOpen: true,
         title: "Eliminar Cliente",
         message: "¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.",
-        onConfirm: () => {
+        onConfirm: async () => {
+            await supabase.from('invoice_clients').delete().eq('id', clientId);
             setClients(clients.filter(c => c.id !== clientId));
             setConfirmationModal({ isOpen: false });
         }
@@ -520,7 +549,9 @@ const ZinniaInvoiceGenerator = () => {
 
           {activeTab === 'generate' && (
             <div className="p-6">
-              {clients.length === 0 ? (
+              {clientsLoading ? (
+                <div className="text-center py-12"><p style={{color:'#888'}}>Cargando clientes...</p></div>
+              ) : clients.length === 0 ? (
                 <div className="text-center py-12"><p>Primero, añade clientes en la pestaña "Gestionar clientes".</p></div>
               ) : (
                 <div className="space-y-6">
