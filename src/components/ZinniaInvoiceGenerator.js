@@ -75,6 +75,7 @@ const ZinniaInvoiceGenerator = () => {
   const [editingClient, setEditingClient] = useState(null);
   const [showClientForm, setShowClientForm] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState({ isOpen: false, onConfirm: () => {} });
+  const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
 
   const [clientForm, setClientForm] = useState({
     name: '', taxId: '', address: '', address2: '',
@@ -687,24 +688,44 @@ const ZinniaInvoiceGenerator = () => {
 
                   {selectedClients.length > 0 && (
                     <div className="border-t pt-6 mt-6">
-                      <div className="flex justify-end gap-4">
-                        <button
-                          onClick={generateAndPrintHTML}
-                          disabled={isGenerating}
-                          className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isGenerating ? <Loader className="animate-spin mr-2 h-5 w-5" /> : <Printer className="mr-2 h-5 w-5" />}
-                          Imprimir HTML
-                        </button>
-                        <button
-                          onClick={generateAndDownloadHTML}
-                          disabled={isGenerating}
-                          className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                          style={{backgroundColor: '#242d4f', color: '#ffffff'}}
-                        >
-                          {isGenerating ? <Loader className="animate-spin mr-2 h-5 w-5" /> : <Download className="mr-2 h-5 w-5" />}
-                          Descargar HTML
-                        </button>
+                      <div className="flex justify-end">
+                        {/* Download dropdown */}
+                        <div style={{position: 'relative'}}>
+                          <button
+                            onClick={() => setShowDownloadDropdown(v => !v)}
+                            disabled={isGenerating}
+                            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{backgroundColor: '#242d4f', gap: '8px'}}
+                          >
+                            {isGenerating ? <Loader className="animate-spin h-5 w-5" /> : <Download className="h-5 w-5" />}
+                            Descargar
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{marginLeft: '2px'}}><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          </button>
+                          {showDownloadDropdown && (
+                            <div
+                              style={{position:'absolute', right:0, top:'calc(100% + 6px)', background:'white', border:'1px solid #e5e7eb', borderRadius:'8px', boxShadow:'0 8px 24px rgba(0,0,0,0.12)', minWidth:'160px', zIndex:100}}
+                              onMouseLeave={() => setShowDownloadDropdown(false)}
+                            >
+                              <button
+                                onClick={() => { setShowDownloadDropdown(false); generateAndDownloadHTML(); }}
+                                style={{display:'flex', alignItems:'center', gap:'10px', width:'100%', padding:'10px 16px', background:'none', border:'none', cursor:'pointer', fontSize:'14px', color:'#242d4f', borderRadius:'8px 8px 0 0'}}
+                                onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
+                                onMouseLeave={e => e.currentTarget.style.background='none'}
+                              >
+                                <FileText size={15} /> HTML
+                              </button>
+                              <div style={{height:'1px', background:'#f0f0f0', margin:'0 12px'}} />
+                              <button
+                                onClick={() => { setShowDownloadDropdown(false); generateAndPrintHTML(); }}
+                                style={{display:'flex', alignItems:'center', gap:'10px', width:'100%', padding:'10px 16px', background:'none', border:'none', cursor:'pointer', fontSize:'14px', color:'#242d4f', borderRadius:'0 0 8px 8px'}}
+                                onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
+                                onMouseLeave={e => e.currentTarget.style.background='none'}
+                              >
+                                <Printer size={15} /> PDF
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
