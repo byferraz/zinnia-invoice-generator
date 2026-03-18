@@ -78,7 +78,7 @@ const ZinniaInvoiceGenerator = () => {
   const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
 
   const [clientForm, setClientForm] = useState({
-    name: '', taxId: '', address: '', address2: '',
+    name: '', shortName: '', taxId: '', address: '', address2: '',
     standardAmount: '', standardSubject: '', taxRate: '0', hasTax: false
   });
 
@@ -122,7 +122,7 @@ const ZinniaInvoiceGenerator = () => {
   // Client form management
   const resetClientForm = () => {
     setClientForm({
-      name: '', taxId: '', address: '', address2: '',
+      name: '', shortName: '', taxId: '', address: '', address2: '',
       standardAmount: '', standardSubject: '', taxRate: '0', hasTax: false
     });
   };
@@ -756,7 +756,8 @@ const ZinniaInvoiceGenerator = () => {
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">{editingClient ? 'Editar Cliente' : 'Nuevo Cliente'}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente *</label><input type="text" value={clientForm.name} onChange={(e) => setClientForm({...clientForm, name: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Nombre de la Empresa" /></div>
+                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente *</label><input type="text" value={clientForm.name} onChange={(e) => setClientForm({...clientForm, name: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Nombre legal completo" /></div>
+                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Nombre Corto <span className="text-gray-400 font-normal">(aparece en el card)</span></label><input type="text" value={clientForm.shortName} onChange={(e) => setClientForm({...clientForm, shortName: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="ej: FIVE ELEVEN" /></div>
                     <div><label className="block text-sm font-medium text-gray-700 mb-1">NIF (opcional)</label><input type="text" value={clientForm.taxId} onChange={(e) => setClientForm({...clientForm, taxId: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="ej: NIF" /></div>
                     <div><label className="block text-sm font-medium text-gray-700 mb-1">Dirección Línea 1 *</label><input type="text" value={clientForm.address} onChange={(e) => setClientForm({...clientForm, address: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Dirección principal" /></div>
                     <div><label className="block text-sm font-medium text-gray-700 mb-1">Dirección Línea 2 (opcional)</label><input type="text" value={clientForm.address2} onChange={(e) => setClientForm({...clientForm, address2: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Piso, apartamento, etc." /></div>
@@ -801,7 +802,10 @@ const ZinniaInvoiceGenerator = () => {
                 {clients.map(client => (
                   <div key={client.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="font-medium text-gray-900">{client.name}</h3>
+                      <div>
+                        <h3 className="font-medium text-gray-900">{client.name}</h3>
+                        {client.shortName && <span className="text-xs text-gray-400">{client.shortName}</span>}
+                      </div>
                       <div className="flex gap-2">
                         <button onClick={() => handleEditClient(client)} className="text-blue-600 hover:text-blue-800"><Edit2 size={16} /></button>
                         <button onClick={() => handleDeleteClient(client.id)} className="text-red-600 hover:text-red-800"><Trash2 size={16} /></button>
