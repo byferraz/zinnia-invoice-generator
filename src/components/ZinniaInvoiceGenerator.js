@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Plus, Edit2, Trash2, Save, X, FileText, Users, Loader, AlertTriangle, Printer, Clock } from 'lucide-react';
+import ZinniaLogo from './ZinniaLogo';
 
 // A simple, reusable modal component for confirmations
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, children }) => {
@@ -476,16 +477,24 @@ const ZinniaInvoiceGenerator = () => {
     >
         {confirmationModal.message}
     </ConfirmationModal>
-    <div className="min-h-screen bg-gray-50 p-6" style={{backgroundColor: '#f2f3f1', fontFamily: 'Aptos, sans-serif'}}>
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6" style={{borderColor: '#ebecea'}}>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold" style={{color: '#242d4f'}}>Invoice Automation</h1>
-              <p className="mt-1" style={{color: '#000000'}}>Zinnia Group LLC</p>
-            </div>
+    <div className="min-h-screen" style={{backgroundColor: '#f2f3f1', fontFamily: "'Rubik', 'Geist', sans-serif"}}>
+      {/* Navbar — igual al de Zinnia Dashboards */}
+      <header style={{backgroundColor: '#1B2035', color: 'white', padding: '16px 24px', boxShadow: '0 4px 24px rgba(0,0,0,0.35)'}}>
+        <div style={{maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
+            <ZinniaLogo variant="on-dark-accent" width={130} />
+            <span style={{color: 'rgba(255,255,255,0.3)', fontSize: '20px', fontWeight: 100}}>|</span>
+            <span style={{color: 'rgba(255,255,255,0.5)', fontSize: '12px'}}>Invoice Generator</span>
+          </div>
+          <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'rgba(255,255,255,0.4)'}}>
+            <span style={{width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#DFF266', display: 'inline-block'}}></span>
+            Interna
           </div>
         </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto" style={{padding: '24px'}}>
+
 
         <div className="bg-white rounded-lg shadow-sm border mb-6" style={{borderColor: '#ebecea'}}>
           <div className="flex border-b" style={{borderColor: '#ebecea'}}>
