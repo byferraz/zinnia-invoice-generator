@@ -426,21 +426,63 @@ const ZinniaInvoiceGenerator = () => {
     }, 100);
   };
 
-  const generateAndPrintHTML = () => {
+  const generateAndDownloadPDF = async () => {
     setIsGenerating(true);
-    setTimeout(() => {
+    try {
       const htmlContent = generateInvoiceHTML();
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(htmlContent);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-      } else {
-        console.error("La ventana emergente para impresión fue bloqueada por el navegador.");
+      const invoiceDateFormatted = new Date(invoiceDate).toISOString().split('T')[0];
+
+      // Render HTML in a hidden iframe so fonts/styles load correctly
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:860px;height:1200px;border:none;';
+      document.body.appendChild(iframe);
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(htmlContent);
+      iframe.contentDocument.close();
+
+      // Wait for fonts and images to load
+      await new Promise(r => setTimeout(r, 1200));
+
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
+
+      const body = iframe.contentDocument.body;
+      const totalHeight = body.scrollHeight;
+      iframe.style.height = totalHeight + 'px';
+      await new Promise(r => setTimeout(r, 200));
+
+      const canvas = await html2canvas(body, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 860,
+        height: totalHeight,
+        windowWidth: 860,
+      });
+
+      document.body.removeChild(iframe);
+
+      const A4_WIDTH_MM = 210;
+      const A4_HEIGHT_MM = 297;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const imgWidthMM = A4_WIDTH_MM;
+      const imgHeightMM = (canvas.height * A4_WIDTH_MM) / canvas.width;
+      let yOffset = 0;
+
+      // Paginate if content is taller than one A4 page
+      while (yOffset < imgHeightMM) {
+        if (yOffset > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, -yOffset, imgWidthMM, imgHeightMM);
+        yOffset += A4_HEIGHT_MM;
       }
-      setIsGenerating(false);
-    }, 150);
+
+      pdf.save(`Zinnia-Invoices-${invoiceDateFormatted}.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+    }
+    setIsGenerating(false);
   };
 
   const recalculateSubtotal = (invoiceData) => {
@@ -716,7 +758,7 @@ const ZinniaInvoiceGenerator = () => {
                               </button>
                               <div style={{height:'1px', background:'#f0f0f0', margin:'0 12px'}} />
                               <button
-                                onClick={() => { setShowDownloadDropdown(false); generateAndPrintHTML(); }}
+                                onClick={() => { setShowDownloadDropdown(false); generateAndDownloadPDF(); }}
                                 style={{display:'flex', alignItems:'center', gap:'10px', width:'100%', padding:'10px 16px', background:'none', border:'none', cursor:'pointer', fontSize:'14px', color:'#242d4f', borderRadius:'0 0 8px 8px'}}
                                 onMouseEnter={e => e.currentTarget.style.background='#f9fafb'}
                                 onMouseLeave={e => e.currentTarget.style.background='none'}
