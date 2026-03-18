@@ -61,7 +61,14 @@ const ZinniaInvoiceGenerator = () => {
     { id: 10, name: "DXD CAPITAL", taxId: "", address: "6801 Jefferson St. NE, 401-B ABQ, NM 87109", address2: "", standardAmount: "1000.00", standardSubject: "Zinnia Media Services", taxRate: "0", hasTax: false }
   ];
 
-  const [clients, setClients] = useState(preloadedClients);
+  const [clients, setClients] = useState(() => {
+    try {
+      const saved = localStorage.getItem('zinnia-clients');
+      return saved ? JSON.parse(saved) : preloadedClients;
+    } catch {
+      return preloadedClients;
+    }
+  });
   const [selectedClients, setSelectedClients] = useState([]);
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState('');
@@ -78,6 +85,11 @@ const ZinniaInvoiceGenerator = () => {
     name: '', taxId: '', address: '', address2: '',
     standardAmount: '', standardSubject: '', taxRate: '0', hasTax: false
   });
+
+  // Persist clients to localStorage whenever they change
+  useEffect(() => {
+    try { localStorage.setItem('zinnia-clients', JSON.stringify(clients)); } catch {}
+  }, [clients]);
 
   // Effect to auto-calculate due date
   useEffect(() => {
