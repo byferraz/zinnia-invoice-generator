@@ -458,6 +458,8 @@ const ZinniaInvoiceGenerator = () => {
       const sectionEnds = [...pageBreakEls.map(el => el.offsetTop), totalHeight];
 
       const A4_WIDTH_MM = 210;
+      const MARGIN_MM = 14; // match browser print margins (~14mm each side)
+      const contentWidthMM = A4_WIDTH_MM - MARGIN_MM * 2;
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
       for (let i = 0; i < sectionStarts.length; i++) {
@@ -479,8 +481,8 @@ const ZinniaInvoiceGenerator = () => {
         });
 
         const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        const imgHeightMM = (canvas.height * A4_WIDTH_MM) / canvas.width;
-        pdf.addImage(imgData, 'JPEG', 0, 0, A4_WIDTH_MM, imgHeightMM);
+        const imgHeightMM = (canvas.height * contentWidthMM) / canvas.width;
+        pdf.addImage(imgData, 'JPEG', MARGIN_MM, MARGIN_MM, contentWidthMM, imgHeightMM);
       }
 
       document.body.removeChild(iframe);
