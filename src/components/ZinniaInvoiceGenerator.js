@@ -50,16 +50,16 @@ const ZinniaInvoiceGenerator = () => {
 
   // Preloaded client list
   const preloadedClients = [
-    { id: 1, name: "FEK MANAGEMENT SPAIN SL", taxId: "B75822965", address: "Calle Camino del Ancho 2, Pta. 45, 28109, Alcobendas, Madrid, España", address2: "", standardAmount: "2500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
-    { id: 2, name: "ESTATING OPERATIONS LUXEMBOURG SARL", taxId: "", address: "4 Rue du fort Wallis, L-2714, Luxembourg", address2: "", standardAmount: "2500.00", standardSubject: "Strategic Marketing & Content Development", taxRate: "0", hasTax: false },
-    { id: 3, name: "LA HOJA CAPITAL PARTNERS", taxId: "", address: "Durango 243, Col Roma Norte CDMX, México", address2: "", standardAmount: "2500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
-    { id: 4, name: "THEHORA GLOBAL FAMILY OFFICE INC.", taxId: "", address: "Suite 5, Horsford´s Business Center, Long Point Road, Nevis", address2: "", standardAmount: "325.00", standardSubject: "Strategic Executive Positioning of Jaume Horrach Pons", taxRate: "0", hasTax: false },
-    { id: 5, name: "PAMPA CAPITAL ASSET MANAGEMENT", taxId: "30717987213", address: "Ortiz de Ocampo 3302, Modulo 3, Oficina 4, CABA, Argentina", address2: "", standardAmount: "1500.00", standardSubject: "Zinnia Essential Plan :: Pampa Capital", taxRate: "0", hasTax: false },
-    { id: 6, name: "BAU ADVISORS LLC", taxId: "", address: "1200 Brickell Ave - Suite 1950, Miami, FL 33131, US", address2: "", standardAmount: "900.00", standardSubject: "Priority 1 scope", taxRate: "0", hasTax: false },
-    { id: 7, name: "VMEO ADVISORY, S.C.", taxId: "VAD200226RS9", address: "HEGEL 221 PISO 1 POLANCO, MEXICO", address2: "", standardAmount: "1500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
-    { id: 8, name: "NORFOLK CAPITAL ADVISORS PANAMÁ S.A.", taxId: "2352531'1'798087 DV 4", address: "Edificio Midtown, San Francisco, Ciudad de Panamá, Panamá", address2: "Piso 17", standardAmount: "3000.00", standardSubject: "Initial Strategic Deliverables (50%)", taxRate: "0", hasTax: false },
-    { id: 9, name: "BRASIL PLURAL INVESTMENT ADVISORS LLC", taxId: "", address: "2601 S Bayshore Drive Unit 1200, Coconut Grove, FL 33133", address2: "", standardAmount: "500.00", standardSubject: "Service Maintenance, Operational Support and Basic Operations", taxRate: "0", hasTax: false },
-    { id: 10, name: "DXD CAPITAL", taxId: "", address: "6801 Jefferson St. NE, 401-B ABQ, NM 87109", address2: "", standardAmount: "1000.00", standardSubject: "Zinnia Media Services", taxRate: "0", hasTax: false }
+    { id: 1, name: "FEK MANAGEMENT SPAIN SL", shortName: "FIVE ELEVEN", taxId: "B75822965", address: "Calle Camino del Ancho 2, Pta. 45, 28109, Alcobendas, Madrid, España", address2: "", standardAmount: "2500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
+    { id: 2, name: "ESTATING OPERATIONS LUXEMBOURG SARL", shortName: "ESTATING", taxId: "", address: "4 Rue du fort Wallis, L-2714, Luxembourg", address2: "", standardAmount: "2500.00", standardSubject: "Strategic Marketing & Content Development", taxRate: "0", hasTax: false },
+    { id: 3, name: "LA HOJA CAPITAL PARTNERS", shortName: "LA HOJA", taxId: "", address: "Durango 243, Col Roma Norte CDMX, México", address2: "", standardAmount: "2500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
+    { id: 4, name: "THEHORA GLOBAL FAMILY OFFICE INC.", shortName: "THEHORA", taxId: "", address: "Suite 5, Horsford´s Business Center, Long Point Road, Nevis", address2: "", standardAmount: "325.00", standardSubject: "Strategic Executive Positioning of Jaume Horrach Pons", taxRate: "0", hasTax: false },
+    { id: 5, name: "PAMPA CAPITAL ASSET MANAGEMENT", shortName: "PAMPA CAPITAL", taxId: "30717987213", address: "Ortiz de Ocampo 3302, Modulo 3, Oficina 4, CABA, Argentina", address2: "", standardAmount: "1500.00", standardSubject: "Zinnia Essential Plan :: Pampa Capital", taxRate: "0", hasTax: false },
+    { id: 6, name: "BAU ADVISORS LLC", shortName: "BAU", taxId: "", address: "1200 Brickell Ave - Suite 1950, Miami, FL 33131, US", address2: "", standardAmount: "900.00", standardSubject: "Priority 1 scope", taxRate: "0", hasTax: false },
+    { id: 7, name: "VMEO ADVISORY, S.C.", shortName: "VMEO", taxId: "VAD200226RS9", address: "HEGEL 221 PISO 1 POLANCO, MEXICO", address2: "", standardAmount: "1500.00", standardSubject: "Marketing and Strategy Services", taxRate: "0", hasTax: false },
+    { id: 8, name: "NORFOLK CAPITAL ADVISORS PANAMÁ S.A.", shortName: "NORFOLK", taxId: "2352531'1'798087 DV 4", address: "Edificio Midtown, San Francisco, Ciudad de Panamá, Panamá", address2: "Piso 17", standardAmount: "3000.00", standardSubject: "Initial Strategic Deliverables (50%)", taxRate: "0", hasTax: false },
+    { id: 9, name: "BRASIL PLURAL INVESTMENT ADVISORS LLC", shortName: "PLURAL", taxId: "", address: "2601 S Bayshore Drive Unit 1200, Coconut Grove, FL 33133", address2: "", standardAmount: "500.00", standardSubject: "Service Maintenance, Operational Support and Basic Operations", taxRate: "0", hasTax: false },
+    { id: 10, name: "DXD CAPITAL", shortName: "DXD CAPITAL", taxId: "", address: "6801 Jefferson St. NE, 401-B ABQ, NM 87109", address2: "", standardAmount: "1000.00", standardSubject: "Zinnia Media Services", taxRate: "0", hasTax: false }
   ];
 
   const [clients, setClients] = useState([]);
@@ -91,7 +91,7 @@ const ZinniaInvoiceGenerator = () => {
         if (data.length === 0) {
           // Seed with preloaded clients on first use
           const rows = preloadedClients.map(c => ({
-            id: c.id, name: c.name, tax_id: c.taxId, address: c.address,
+            id: c.id, name: c.name, short_name: c.shortName, tax_id: c.taxId, address: c.address,
             address2: c.address2, standard_amount: c.standardAmount,
             standard_subject: c.standardSubject, tax_rate: c.taxRate, has_tax: c.hasTax
           }));
@@ -99,7 +99,7 @@ const ZinniaInvoiceGenerator = () => {
           setClients(preloadedClients);
         } else {
           setClients(data.map(r => ({
-            id: r.id, name: r.name, taxId: r.tax_id || '', address: r.address || '',
+            id: r.id, name: r.name, shortName: r.short_name || '', taxId: r.tax_id || '', address: r.address || '',
             address2: r.address2 || '', standardAmount: r.standard_amount || '',
             standardSubject: r.standard_subject || '', taxRate: r.tax_rate || '0', hasTax: r.has_tax || false
           })));
@@ -128,7 +128,7 @@ const ZinniaInvoiceGenerator = () => {
   };
 
   const toRow = (c) => ({
-    id: c.id, name: c.name, tax_id: c.taxId, address: c.address,
+    id: c.id, name: c.name, short_name: c.shortName || '', tax_id: c.taxId, address: c.address,
     address2: c.address2, standard_amount: c.standardAmount,
     standard_subject: c.standardSubject, tax_rate: c.taxRate, has_tax: c.hasTax,
     updated_at: new Date().toISOString()
@@ -587,10 +587,7 @@ const ZinniaInvoiceGenerator = () => {
                               </span>
                             )}
                             <div style={{fontWeight:600, fontSize:'12px', color:'#1B2035', lineHeight:'1.3', paddingRight: isSelected ? '18px' : '0'}}>
-                              {client.name}
-                            </div>
-                            <div style={{fontSize:'12px', color:'#888', marginTop:'6px', fontWeight:500}}>
-                              ${parseFloat(client.standardAmount || 0).toLocaleString('en-US', {minimumFractionDigits:2})}
+                              {client.shortName || client.name}
                             </div>
                           </div>
                         );
