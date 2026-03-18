@@ -462,6 +462,24 @@ const ZinniaInvoiceGenerator = () => {
     }]);
   };
 
+  const toggleClientCard = (client) => {
+    const already = selectedClients.findIndex(sc => sc.clientId === client.id);
+    if (already >= 0) {
+      setSelectedClients(selectedClients.filter((_, i) => i !== already));
+    } else {
+      setSelectedClients([...selectedClients, {
+        clientId: client.id,
+        invoiceNumber: '',
+        subject: 'Marketing and Strategy Services',
+        itemDetail: client.standardSubject,
+        quantity: '1',
+        rate: client.standardAmount,
+        subtotalAmount: client.standardAmount,
+        addOns: []
+      }]);
+    }
+  };
+
   const updateSelectedClient = (index, field, value) => {
     const updated = [...selectedClients];
     const currentInvoice = updated[index];
@@ -554,6 +572,52 @@ const ZinniaInvoiceGenerator = () => {
                 <div className="text-center py-12"><p>Primero, añade clientes en la pestaña "Gestionar clientes".</p></div>
               ) : (
                 <div className="space-y-6">
+
+                  {/* ── CLIENT GRID ── */}
+                  <div>
+                    <p className="text-xs font-medium mb-3" style={{color:'#888', textTransform:'uppercase', letterSpacing:'0.05em'}}>
+                      Seleccioná uno o más clientes para facturar
+                    </p>
+                    <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(180px, 1fr))', gap:'10px'}}>
+                      {clients.map(client => {
+                        const isSelected = selectedClients.some(sc => sc.clientId === client.id);
+                        return (
+                          <div
+                            key={client.id}
+                            onClick={() => toggleClientCard(client)}
+                            style={{
+                              border: isSelected ? '2px solid #dff266' : '1.5px solid #e5e7eb',
+                              borderRadius: '10px',
+                              padding: '14px 14px 12px',
+                              cursor: 'pointer',
+                              background: isSelected ? 'rgba(223,242,102,0.10)' : 'white',
+                              transition: 'all 0.15s',
+                              position: 'relative',
+                              userSelect: 'none',
+                            }}
+                          >
+                            {isSelected && (
+                              <span style={{position:'absolute', top:'8px', right:'8px', background:'#dff266', borderRadius:'50%', width:'16px', height:'16px', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                                <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#242d4f" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              </span>
+                            )}
+                            <div style={{fontWeight:600, fontSize:'12px', color:'#1B2035', lineHeight:'1.3', paddingRight: isSelected ? '18px' : '0'}}>
+                              {client.name}
+                            </div>
+                            <div style={{fontSize:'12px', color:'#888', marginTop:'6px', fontWeight:500}}>
+                              ${parseFloat(client.standardAmount || 0).toLocaleString('en-US', {minimumFractionDigits:2})}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* ── INVOICE FORM — only visible when clients selected ── */}
+                  {selectedClients.length > 0 && (
+                  <div style={{borderTop:'1.5px solid #ebecea', paddingTop:'24px'}} className="space-y-6">
+
+                   {/* Dates */}
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2" style={{color: '#242d4f'}}>Invoice date</label>
@@ -565,127 +629,80 @@ const ZinniaInvoiceGenerator = () => {
                       </div>
                    </div>
 
-                   {/* NUEVA SECCIÓN: TERMS & CONDITIONS */}
-                   <div className="mt-4 p-4 bg-gray-50 rounded-lg" style={{borderColor: '#ebecea'}}>
-                     <h4 className="text-md font-medium mb-3" style={{color: '#242d4f'}}>Terms & Conditions</h4>
+                   {/* Terms & Conditions */}
+                   <div className="p-4 bg-gray-50 rounded-lg">
+                     <h4 className="text-sm font-semibold mb-3" style={{color: '#242d4f'}}>Terms & Conditions</h4>
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                        <div>
                          <label className="block text-xs font-medium text-gray-700 mb-1">Payment Days</label>
-                         <input 
-                           type="number" 
-                           value={paymentDays} 
-                           onChange={(e) => setPaymentDays(e.target.value)} 
-                           className="w-full px-3 py-2 border rounded-md text-sm" 
-                           style={{borderColor: '#ebecea'}}
-                           placeholder="15"
-                         />
+                         <input type="number" value={paymentDays} onChange={(e) => setPaymentDays(e.target.value)} className="w-full px-3 py-2 border rounded-md text-sm" style={{borderColor: '#ebecea'}} placeholder="15"/>
                        </div>
                        <div>
                          <label className="block text-xs font-medium text-gray-700 mb-1">Late Fee Days</label>
-                         <input 
-                           type="number" 
-                           value={lateFeeDays} 
-                           onChange={(e) => setLateFeeDays(e.target.value)} 
-                           className="w-full px-3 py-2 border rounded-md text-sm" 
-                           style={{borderColor: '#ebecea'}}
-                           placeholder="30"
-                         />
+                         <input type="number" value={lateFeeDays} onChange={(e) => setLateFeeDays(e.target.value)} className="w-full px-3 py-2 border rounded-md text-sm" style={{borderColor: '#ebecea'}} placeholder="30"/>
                        </div>
                        <div>
                          <label className="block text-xs font-medium text-gray-700 mb-1">Late Fee Rate (%)</label>
-                         <input 
-                           type="number" 
-                           step="0.1"
-                           value={lateFeeRate} 
-                           onChange={(e) => setLateFeeRate(e.target.value)} 
-                           className="w-full px-3 py-2 border rounded-md text-sm" 
-                           style={{borderColor: '#ebecea'}}
-                           placeholder="1.5"
-                         />
+                         <input type="number" step="0.1" value={lateFeeRate} onChange={(e) => setLateFeeRate(e.target.value)} className="w-full px-3 py-2 border rounded-md text-sm" style={{borderColor: '#ebecea'}} placeholder="1.5"/>
                        </div>
                      </div>
                    </div>
 
-                   <div>
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-medium" style={{color: '#242d4f'}}>Cliente a facturar</h3>
-                        <button onClick={addSelectedClient} className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md" style={{backgroundColor: '#dff266', color: '#242d4f'}}>
-                            <Plus className="mr-1 h-4 w-4" /> Agregar cliente
-                        </button>
-                      </div>
-                      <div className="mt-4">
-                          {selectedClients.length > 0 ? (
-                            <div className="space-y-4">
-                              {selectedClients.map((selectedClient, index) => {
-                                const client = clients.find(c => c.id === selectedClient.clientId);
-                                const { total } = client ? calculateTotals(selectedClient.subtotalAmount, client.taxRate, client.hasTax) : { total: 0 };
-                                return (
-                                  <div key={index} className="border rounded-lg p-4 bg-gray-50" style={{borderColor: '#ebecea'}}>
-                                      <div className="flex justify-between items-start mb-4">
-                                          <h4 className="font-medium text-gray-900">Invoice para {client?.name || 'cliente'}</h4>
-                                          <button onClick={() => removeSelectedClient(index)} className="text-red-600 hover:text-red-800"><Trash2 size={16} /></button>
-                                      </div>
-                                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div>
-                                          <label className="block text-sm font-medium text-gray-700 mb-1">Billed to</label>
-                                          <select value={selectedClient.clientId} onChange={(e) => updateSelectedClient(index, 'clientId', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                            {clients.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
-                                          </select>
-                                        </div>
-                                        <div>
-                                          <label className="block text-sm font-medium text-gray-700 mb-1">Invoice number</label>
-                                          <div className="flex items-center">
-                                              <span className="text-gray-500 pr-2">#ZN-</span>
-                                              <input type="text" value={selectedClient.invoiceNumber} onChange={(e) => updateSelectedClient(index, 'invoiceNumber', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="ej: 43" />
-                                          </div>
-                                        </div>
-                                        <div>
-                                          <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                                          <input type="text" value={selectedClient.subject} onChange={(e) => updateSelectedClient(index, 'subject', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
-                                        </div>
-                                      </div>
-                                      
-                                      <div className="mt-4 border-t pt-4">
-                                          <h5 className="text-md font-medium text-gray-800 mb-2">Detalles del invoice</h5>
-                                          <div className="grid grid-cols-12 gap-2 items-end mb-2">
-                                              <div className="col-span-6"><label className="text-xs font-medium text-gray-500">Item Detail</label><input type="text" value={selectedClient.itemDetail} onChange={(e) => updateSelectedClient(index, 'itemDetail', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
-                                              <div className="col-span-2"><label className="text-xs font-medium text-gray-500">Qty</label><input type="number" value={selectedClient.quantity} onChange={(e) => updateSelectedClient(index, 'quantity', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
-                                              <div className="col-span-3"><label className="text-xs font-medium text-gray-500">Rate</label><input type="number" step="0.01" value={selectedClient.rate} onChange={(e) => updateSelectedClient(index, 'rate', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
-                                          </div>
-                                          {selectedClient.addOns.map((addon, addonIndex) => (
-                                             <div key={addonIndex} className="grid grid-cols-12 gap-2 items-end mb-2">
-                                                  <div className="col-span-6"><input type="text" placeholder="Descripción del ítem adicional" value={addon.description} onChange={e => updateAddOn(index, addonIndex, 'description', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
-                                                  <div className="col-span-2"><input type="number" placeholder="1" value={addon.quantity} onChange={e => updateAddOn(index, addonIndex, 'quantity', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
-                                                  <div className="col-span-3"><input type="number" step="0.01" placeholder="0.00" value={addon.rate} onChange={e => updateAddOn(index, addonIndex, 'rate', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
-                                                  <div className="col-span-1"><button onClick={() => removeAddOn(index, addonIndex)} className="text-red-500 hover:text-red-700 p-1"><X size={16}/></button></div>
-                                             </div>
-                                          ))}
-                                          <button onClick={() => addAddOn(index)} className="text-sm text-blue-600 hover:text-blue-800 font-medium mt-2"><Plus size={14} className="inline mr-1"/>Añadir Ítem</button>
-                                      </div>
-
-                                       <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                                          <div className="flex justify-between items-center">
-                                              <span className="font-medium text-blue-900">Amount:</span>
-                                              <span className="text-lg font-bold text-blue-900">${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</span>
-                                          </div>
-                                      </div>
+                   {/* Per-client invoice rows */}
+                   <div className="space-y-4">
+                      <h3 className="text-sm font-semibold" style={{color: '#242d4f'}}>Detalle por cliente</h3>
+                      {selectedClients.map((selectedClient, index) => {
+                        const client = clients.find(c => c.id === selectedClient.clientId);
+                        const { total } = client ? calculateTotals(selectedClient.subtotalAmount, client.taxRate, client.hasTax) : { total: 0 };
+                        return (
+                          <div key={index} className="border rounded-lg p-4 bg-gray-50" style={{borderColor: '#ebecea'}}>
+                              <div className="flex justify-between items-start mb-4">
+                                  <h4 className="font-medium text-gray-900">{client?.name || 'cliente'}</h4>
+                                  <button onClick={() => removeSelectedClient(index)} className="text-red-400 hover:text-red-600"><Trash2 size={15} /></button>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Invoice number</label>
+                                  <div className="flex items-center">
+                                      <span className="text-gray-500 pr-2">#ZN-</span>
+                                      <input type="text" value={selectedClient.invoiceNumber} onChange={(e) => updateSelectedClient(index, 'invoiceNumber', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="ej: 43" />
                                   </div>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <div className="text-center py-12 px-6 border-2 border-dashed rounded-lg" style={{borderColor: '#ccbea7'}}>
-                                <Clock className="mx-auto h-12 w-12" style={{color: '#ccbea7'}} />
-                                <p className="mt-4 text-lg font-medium" style={{color: '#ccbea7'}}>
-                                    No hay clientes seleccionados
-                                </p>
-                            </div>
-                          )}
-                      </div>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                  <input type="text" value={selectedClient.subject} onChange={(e) => updateSelectedClient(index, 'subject', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                                </div>
+                              </div>
+                              <div className="mt-4 border-t pt-4">
+                                  <h5 className="text-sm font-medium text-gray-700 mb-2">Ítems</h5>
+                                  <div className="grid grid-cols-12 gap-2 items-end mb-2">
+                                      <div className="col-span-6"><label className="text-xs font-medium text-gray-500">Item Detail</label><input type="text" value={selectedClient.itemDetail} onChange={(e) => updateSelectedClient(index, 'itemDetail', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
+                                      <div className="col-span-2"><label className="text-xs font-medium text-gray-500">Qty</label><input type="number" value={selectedClient.quantity} onChange={(e) => updateSelectedClient(index, 'quantity', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
+                                      <div className="col-span-3"><label className="text-xs font-medium text-gray-500">Rate</label><input type="number" step="0.01" value={selectedClient.rate} onChange={(e) => updateSelectedClient(index, 'rate', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
+                                  </div>
+                                  {selectedClient.addOns.map((addon, addonIndex) => (
+                                     <div key={addonIndex} className="grid grid-cols-12 gap-2 items-end mb-2">
+                                          <div className="col-span-6"><input type="text" placeholder="Descripción adicional" value={addon.description} onChange={e => updateAddOn(index, addonIndex, 'description', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
+                                          <div className="col-span-2"><input type="number" placeholder="1" value={addon.quantity} onChange={e => updateAddOn(index, addonIndex, 'quantity', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
+                                          <div className="col-span-3"><input type="number" step="0.01" placeholder="0.00" value={addon.rate} onChange={e => updateAddOn(index, addonIndex, 'rate', e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" /></div>
+                                          <div className="col-span-1"><button onClick={() => removeAddOn(index, addonIndex)} className="text-red-500 hover:text-red-700 p-1"><X size={16}/></button></div>
+                                     </div>
+                                  ))}
+                                  <button onClick={() => addAddOn(index)} className="text-sm text-blue-600 hover:text-blue-800 font-medium mt-2"><Plus size={14} className="inline mr-1"/>Añadir Ítem</button>
+                              </div>
+                              <div className="mt-4 p-3 rounded-md" style={{background:'rgba(223,242,102,0.15)'}}>
+                                  <div className="flex justify-between items-center">
+                                      <span className="font-medium" style={{color:'#242d4f'}}>Total:</span>
+                                      <span className="text-lg font-bold" style={{color:'#242d4f'}}>${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</span>
+                                  </div>
+                              </div>
+                          </div>
+                        );
+                      })}
                    </div>
 
-                  {selectedClients.length > 0 && (
-                    <div className="border-t pt-6 mt-6">
+                   {/* Download button */}
+                   <div style={{borderTop:'1.5px solid #ebecea', paddingTop:'20px'}}>
                       <div className="flex justify-end">
                         {/* Download dropdown */}
                         <div style={{position: 'relative'}}>
@@ -726,6 +743,7 @@ const ZinniaInvoiceGenerator = () => {
                         </div>
                       </div>
                     </div>
+                  </div>
                   )}
                 </div>
               )}
