@@ -434,7 +434,7 @@ const ZinniaInvoiceGenerator = () => {
 
       // Render HTML in a hidden iframe so fonts/styles load correctly
       const iframe = document.createElement('iframe');
-      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:860px;height:1200px;border:none;';
+      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:860px;border:none;';
       document.body.appendChild(iframe);
       iframe.contentDocument.open();
       iframe.contentDocument.write(htmlContent);
@@ -443,41 +443,47 @@ const ZinniaInvoiceGenerator = () => {
       // Wait for fonts and images to load
       await new Promise(r => setTimeout(r, 1200));
 
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
-
-      const body = iframe.contentDocument.body;
+      const iframeDoc = iframe.contentDocument;
+      const body = iframeDoc.body;
       const totalHeight = body.scrollHeight;
       iframe.style.height = totalHeight + 'px';
       await new Promise(r => setTimeout(r, 200));
 
-      const canvas = await html2canvas(body, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        width: 860,
-        height: totalHeight,
-        windowWidth: 860,
-      });
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
 
-      document.body.removeChild(iframe);
+      // Detect page break positions using .page-break elements
+      const pageBreakEls = Array.from(iframeDoc.querySelectorAll('.page-break'));
+      const sectionStarts = [0, ...pageBreakEls.map(el => el.offsetTop)];
+      const sectionEnds = [...pageBreakEls.map(el => el.offsetTop), totalHeight];
 
       const A4_WIDTH_MM = 210;
-      const A4_HEIGHT_MM = 297;
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      const imgWidthMM = A4_WIDTH_MM;
-      const imgHeightMM = (canvas.height * A4_WIDTH_MM) / canvas.width;
-      let yOffset = 0;
 
-      // Paginate if content is taller than one A4 page
-      while (yOffset < imgHeightMM) {
-        if (yOffset > 0) pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 0, -yOffset, imgWidthMM, imgHeightMM);
-        yOffset += A4_HEIGHT_MM;
+      for (let i = 0; i < sectionStarts.length; i++) {
+        if (i > 0) pdf.addPage();
+
+        const startY = sectionStarts[i];
+        const sectionHeight = sectionEnds[i] - startY;
+
+        const canvas = await html2canvas(body, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: 860,
+          height: sectionHeight,
+          y: startY,
+          windowWidth: 860,
+          windowHeight: sectionHeight,
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const imgHeightMM = (canvas.height * A4_WIDTH_MM) / canvas.width;
+        pdf.addImage(imgData, 'JPEG', 0, 0, A4_WIDTH_MM, imgHeightMM);
       }
 
+      document.body.removeChild(iframe);
       pdf.save(`Zinnia-Invoices-${invoiceDateFormatted}.pdf`);
     } catch (err) {
       console.error('PDF generation failed:', err);
