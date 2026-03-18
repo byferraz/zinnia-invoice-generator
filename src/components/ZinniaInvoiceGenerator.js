@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Plus, Edit2, Trash2, Save, X, FileText, Users, Loader, AlertTriangle, Printer, Clock } from 'lucide-react';
+import { Download, Plus, Edit2, Trash2, Save, X, FileText, Users, Loader, AlertTriangle, Printer } from 'lucide-react';
 import ZinniaLogo from './ZinniaLogo';
 import { supabase } from '../supabase';
 
@@ -445,21 +445,6 @@ const ZinniaInvoiceGenerator = () => {
     const baseAmount = (parseFloat(invoiceData.rate) || 0) * (parseFloat(invoiceData.quantity) || 1);
     const addOnsTotal = (invoiceData.addOns || []).reduce((sum, addon) => sum + (parseFloat(addon.rate || 0) * parseFloat(addon.quantity || 1)), 0);
     invoiceData.subtotalAmount = (baseAmount + addOnsTotal).toString();
-  };
-
-  const addSelectedClient = () => {
-    const firstClient = clients[0];
-    if (!firstClient) return;
-    setSelectedClients([...selectedClients, {
-      clientId: firstClient.id,
-      invoiceNumber: '',
-      subject: "Marketing and Strategy Services",
-      itemDetail: firstClient.standardSubject,
-      quantity: '1',
-      rate: firstClient.standardAmount,
-      subtotalAmount: firstClient.standardAmount,
-      addOns: []
-    }]);
   };
 
   const toggleClientCard = (client) => {
