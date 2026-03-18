@@ -426,71 +426,19 @@ const ZinniaInvoiceGenerator = () => {
     }, 100);
   };
 
-  const generateAndDownloadPDF = async () => {
+  const generateAndDownloadPDF = () => {
     setIsGenerating(true);
-    try {
+    setTimeout(() => {
       const htmlContent = generateInvoiceHTML();
-      const invoiceDateFormatted = new Date(invoiceDate).toISOString().split('T')[0];
-
-      // Render HTML in a hidden iframe so fonts/styles load correctly
-      const iframe = document.createElement('iframe');
-      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:860px;border:none;';
-      document.body.appendChild(iframe);
-      iframe.contentDocument.open();
-      iframe.contentDocument.write(htmlContent);
-      iframe.contentDocument.close();
-
-      // Wait for fonts and images to load
-      await new Promise(r => setTimeout(r, 1200));
-
-      const iframeDoc = iframe.contentDocument;
-      const body = iframeDoc.body;
-      const totalHeight = body.scrollHeight;
-      iframe.style.height = totalHeight + 'px';
-      await new Promise(r => setTimeout(r, 200));
-
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
-
-      // Detect page break positions using .page-break elements
-      const pageBreakEls = Array.from(iframeDoc.querySelectorAll('.page-break'));
-      const sectionStarts = [0, ...pageBreakEls.map(el => el.offsetTop)];
-      const sectionEnds = [...pageBreakEls.map(el => el.offsetTop), totalHeight];
-
-      const A4_WIDTH_MM = 210;
-      const MARGIN_MM = 14; // match browser print margins (~14mm each side)
-      const contentWidthMM = A4_WIDTH_MM - MARGIN_MM * 2;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-      for (let i = 0; i < sectionStarts.length; i++) {
-        if (i > 0) pdf.addPage();
-
-        const startY = sectionStarts[i];
-        const sectionHeight = sectionEnds[i] - startY;
-
-        const canvas = await html2canvas(body, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          width: 860,
-          height: sectionHeight,
-          y: startY,
-          windowWidth: 860,
-          windowHeight: sectionHeight,
-        });
-
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        const imgHeightMM = (canvas.height * contentWidthMM) / canvas.width;
-        pdf.addImage(imgData, 'JPEG', MARGIN_MM, MARGIN_MM, contentWidthMM, imgHeightMM);
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
       }
-
-      document.body.removeChild(iframe);
-      pdf.save(`Zinnia-Invoices-${invoiceDateFormatted}.pdf`);
-    } catch (err) {
-      console.error('PDF generation failed:', err);
-    }
-    setIsGenerating(false);
+      setIsGenerating(false);
+    }, 150);
   };
 
   const recalculateSubtotal = (invoiceData) => {
